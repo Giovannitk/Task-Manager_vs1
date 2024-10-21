@@ -33,7 +33,7 @@ public class SecurityConfig {
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);  // Disabilita le sessioni
 
-        // Aggiungi il filtro JWT prima del filtro di autenticazione standard di Spring Security
+        // Aggiungi il filtro JWT prima del filtro di autenticazione standard di Spring Security second commmit
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
