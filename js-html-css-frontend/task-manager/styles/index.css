@@ -1,0 +1,26 @@
+body {
+  background-color: antiquewhite;
+  color: black;
+}
+
+h1 {
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.add-task, 
+.update-button,
+.delete-button{
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+}
+
+.update-button, .delete-button{
+  margin-right: 5px;
+  margin-bottom: 10px;
+}
+
+.input-task {
+  color: black;
+  border-radius: 5px;
+}
