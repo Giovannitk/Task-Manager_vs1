@@ -44,6 +44,11 @@ public class TaskService {
         }
     }
     
+    public void deleteAllTasksByUser(User user) {
+		// TODO Auto-generated method stub 
+		taskRepository.deleteAllByUser(user);
+	}
+    
     public Task createTask(Task task, UserDetails userDetails) {
         // Ottieni l'utente dal contesto di sicurezza
         User user = userRepository.findByUsername(userDetails.getUsername());
