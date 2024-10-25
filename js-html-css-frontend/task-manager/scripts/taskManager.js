@@ -1,3 +1,6 @@
+const username = "Peppe";
+document.querySelector("h1").innerText = `Benvenuto ${username}`;
+
 async function fetchTasks() {
   const response = await fetch('http://localhost:8081/tasks');
   const tasks = await response.json();
@@ -102,4 +105,28 @@ async function toggleTaskCompletion(taskId) {
 
 
 // Inizializza il caricamento delle attività al caricamento della pagina
-fetchTasks();
+//fetchTasks();
+
+
+
+const tasks = [{
+    id: 1,
+    title: "Peppe",
+    description: "Franco è peppe",
+    completed: false
+}];
+tasks.forEach(task => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span>${task.title} - ${task.description} (Completed: ${task.completed})</span>
+      <button class="update-button" data-id="${task.id}">Update</button>
+      <button class="delete-button" data-id="${task.id}">Delete</button>
+      <input type="checkbox" class="complete-checkbox" data-id="${task.id}" ${task.completed ? 'checked' : ''}>
+    `;
+    taskList.appendChild(li);
+
+    // Aggiungi listener per aggiornare/completare/eliminare
+    li.querySelector('.update-button').addEventListener('click', () => updateTask(task.id));
+    li.querySelector('.delete-button').addEventListener('click', () => deleteTask(task.id));
+    li.querySelector('.complete-checkbox').addEventListener('change', () => toggleTaskCompletion(task.id, !task.completed));
+  });
