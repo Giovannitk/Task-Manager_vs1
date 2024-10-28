@@ -53,27 +53,26 @@ form.addEventListener("submit", async function(event) {
     const password = passInput.value;
     
     fetch("http://localhost:8081/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, password })
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username, password })
     })
     .then(response => {
         if (!response.ok) {
-            console.log("cipolla");
             throw new Error("Login failed!");
         }
         return response.json(); // Converte la risposta in JSON
     })
     .then(data => {
-        console.log("Response JSON:", data);
         const token = data.jwt; // Accede al token
         console.log("Token:", token);
-        // Qui puoi salvare il token in localStorage o usarlo per successive richieste
 
-        //location.href = form.getAttribute("action");  // Login effettuato con successo.
+        localStorage.setItem('token', token);
+        localStorage.setItem('username', username);
     })
     .catch(error => console.error("Error:", error));
+
   }
 });
