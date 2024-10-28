@@ -71,6 +71,8 @@ form.addEventListener("submit", async function(event) {
 
         localStorage.setItem('token', token);
         localStorage.setItem('username', username);
+
+        location.href = form.getAttribute("action");  // Login effettuato con successo.
     })
     .catch(error => console.error("Error:", error));
 

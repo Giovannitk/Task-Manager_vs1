@@ -30,7 +30,7 @@ async function fetchTasks() {
     // Aggiungi listener per aggiornare/completare/eliminare
     li.querySelector('.update-button').addEventListener('click', () => updateTask(task.id));
     li.querySelector('.delete-button').addEventListener('click', () => deleteTask(task.id));
-    li.querySelector('.complete-checkbox').addEventListener('change', () => toggleTaskCompletion(task.id, !task.completed));
+    li.querySelector('.complete-checkbox').addEventListener('change', () => toggleTaskCompletion(task, !task.completed));
   });
 }
 
@@ -59,43 +59,64 @@ async function updateTask(taskId) {
   const newTitle = prompt("Enter new title:");
   const newDescription = prompt("Enter new description:");
   
-  const response = await fetch(`http://localhost:8081/tasks/${taskId}`, {
-      method: 'PUT',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-          title: newTitle,
-          description: newDescription,
-          completed: false  // Puoi gestire anche il completamento qui
-      })
-  });
-
-  if (response.ok) {
+  try{
+    const response = await fetch(`http://localhost:8081/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            title: newTitle,
+            description: newDescription,
+            completed: false  // Puoi gestire anche il completamento qui
+        })
+    });
+  
+    if (response.ok) {
       fetchTasks();  // Aggiorna la lista
+    }else{
+          throw new Error(`Task with ID ${taskId} not found.`);
+      }
+
+  }catch(error){
+    alert(error.message);
   }
 }
 
 // Funzione per eliminare un task
 async function deleteTask(taskId) {
-  const response = await fetch(`http://localhost:8081/tasks/${taskId}`, {
-      method: 'DELETE'
-  });
-
-  if (response.ok) {
-      fetchTasks();  // Aggiorna la lista
-  }
+    try{
+        const response = await fetch(`http://localhost:8081/tasks/${taskId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+      
+        if (response.ok) {
+            fetchTasks();  // Aggiorna la lista
+        }else{
+            throw new Error(`Task with ID ${taskId} not found.`);
+        }
+    }catch(error){
+        alert(error.message);
+    }
 }
 
 // Funzione per marcare come completato/uncompleted
-async function toggleTaskCompletion(taskId, isCompleted) {
+async function toggleTaskCompletion(task, isCompleted) {
   try {
-      const response = await fetch(`http://localhost:8081/tasks/${taskId}`, {
+      const response = await fetch(`http://localhost:8081/tasks/${task.id}`, {
           method: 'PUT',
           headers: {
-              'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
+              title: task.title,
+              description: task.description,
               completed: isCompleted
           })
       });
