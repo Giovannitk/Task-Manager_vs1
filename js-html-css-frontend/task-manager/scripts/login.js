@@ -6,7 +6,7 @@ const form = document.querySelector("form"),
 
 // Username validation
 function checkUsername() {
-  const usernamePattern = /^[^ ]+@[^ ]+\.[a-z]/;
+  const usernamePattern = /^[a-zA-Z0-9_-]{8,16}$/;
   if(!usernameInput.value.match(usernamePattern)){
     return usernameField.classList.add("invalid");
   }
@@ -29,7 +29,8 @@ eyeIcons.forEach(eyeIcon => {
 
 //Password Validation
 function createPass(){
-  const passPattern = /^(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@!%*?&]{8,}$/;
+  const passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$!%*?&])[A-Za-z\d$!%*?&]{8,}$/;
+
 
   if(!passInput.value.match(passPattern)){
     return passField.classList.add("invalid");

@@ -15,7 +15,18 @@
         <button type="submit" id="addTaskButton" class="add-task">Add Task</button>
     </form>
 
-    <ul id="taskList"></ul>
+    <table id="taskTable">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Completed</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="taskList">
+        </tbody>
+    </table>
 
     <script src="scripts/taskManager.js"></script>
 </body>
