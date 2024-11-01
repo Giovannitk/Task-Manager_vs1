@@ -3,8 +3,9 @@ body {
   color: black;
 }
 
-h1 {
+.header {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: x-large;
 }
 
 table {
@@ -21,11 +22,18 @@ th, td {
 
 .add-task,
 .update-button,
-.delete-button {
+.delete-button,
+.log-out-button {
   background-color: black;
   color: white;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.log-out-button {
+  background-color: red;
+  margin-left: 175px;
+  margin-bottom: 10px;
 }
 
 .update-button, .delete-button {

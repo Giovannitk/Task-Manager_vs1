@@ -1,5 +1,5 @@
 const username = localStorage.getItem('username');
-document.querySelector("h1").innerText = `Benvenuto ${username}`;
+document.querySelector(".header").innerText = `Benvenuto ${username}`;
 
 const token = localStorage.getItem('token');
 if (!token) {
@@ -137,4 +137,13 @@ function setAuthHeaders(){
 		'Content-Type': 'application/json',
 		'Authorization': `Bearer ${token}`
 	};
+}
+
+document.getElementById('logoutButton').addEventListener('click', () => {
+  logOut();
+});
+
+function logOut(){
+  location.href = 'login.html';
+  localStorage.removeItem('token');
 }
