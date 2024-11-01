@@ -1,8 +1,12 @@
 const form = document.querySelector("form"),
   usernameField = form.querySelector(".username-field"),
   usernameInput = usernameField.querySelector(".username"),
+
   passField = form.querySelector(".password-field"),
-  passInput = passField.querySelector(".password");
+  passInput = passField.querySelector(".password"),
+
+  passConfField = form.querySelector(".confirm-field"),
+  passConfInput = passConfField.querySelector(".confirm-pass");
 
 // Username validation
 function checkUsername() {
@@ -37,11 +41,20 @@ function createPass(){
   passField.classList.remove("invalid");
 }
 
+//Confirm Password
+function confirmPass(){
+  if(passConfInput.value !== passInput.value){
+    return passConfField.classList.add("invalid");
+  }
+  passConfField.classList.remove("invalid");
+}
+
 // Calling Function on form Submit
 form.addEventListener("submit", async function(event) {
   event.preventDefault(); //preventing form submitting
   checkUsername();
   createPass();
+  confirmPass();
 
   //Calling function on key up
   usernameInput.addEventListener("keyup", checkUsername);
@@ -52,43 +65,28 @@ form.addEventListener("submit", async function(event) {
     const username = usernameInput.value;
     const password = passInput.value;
     
-    fetch("http://localhost:8081/login", {
+    fetch("http://localhost:8081/register", {
       method: "POST",
       headers: {
-          "Content-Type": "application/json"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({ username, password })
     })
     .then(response => {
-      if (!response.ok) { 
-        if (response.status === 401) {
-          alert("Incorrect password.");
-          throw new Error("Login failed! Incorrect password.");
-        } else if (response.status === 403) {
-          alert("Incorrect username or password.");
-          throw new Error("Login failed! Access forbidden.");
-        } else if (response.status === 500) {
-          alert("Server error. Try later.");
-          throw new Error("Server error.");
-        } else {
-          alert("Errore sconosciuto. Riprova.");
-          throw new Error("Unknown error. Try again.");
-        }
+      if (!response.ok) {
+        throw new Error("Signup failed!");
       }
-      return response.json(); // Converte la risposta in JSON se tutto va bene
+      // Controlla il tipo di contenuto della risposta
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return response.json();
+      } else {
+        return response.text(); // gestisce risposte non JSON
+      }
     })
     .then(data => {
-      const token = data.jwt; // Accede al token
-      console.log("Token:", token);
-
-      localStorage.setItem('token', token);
-      localStorage.setItem('username', username);
-
-      location.href = form.getAttribute("action");  // Login effettuato con successo.
+      location.href = form.getAttribute("action"); // Registrazione effettuata con successo.
     })
-    .catch(error => {
-      console.error("Error:", error);
-      return;  // Interrompe il flusso in caso di errore
-    });
+    .catch(error => console.error("Error:", error));
   }
 });

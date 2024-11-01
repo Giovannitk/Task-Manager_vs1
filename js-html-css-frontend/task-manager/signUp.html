@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp TaskManager</title>
+
+    <link rel="stylesheet" href="styles/signUp.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>Sign-up</header>
+    <form action="login.html">
+      <div class="field username-field">
+        <div class="input-field">
+          <input type="text" class="username" placeholder="Enter your username" />
+        </div>
+        <span class="error username-error">
+          <i class="bx bx-error-circle error-icon"></i>
+          <p class="error-text">Please enter a valid username</p>
+        </span>
+      </div>
+
+      <div class="field  password-field">
+        <div class="input-field">
+          <input type="password" placeholder="Enter your password" class="password"/>
+          <i class="bx bx-hide show-hide"></i>
+        </div>
+        <span class="error password-error">
+          <i class="bx bx-error-circle error-icon"></i>
+          <p class="error-text">Please enter at least 8 characters with a number, symbol, small and capital letter.</p>
+        </span>
+      </div>
+
+      <div class="field  confirm-field">
+        <div class="input-field">
+          <input type="password" placeholder="Confirm your password" class="confirm-pass"/>
+          <i class="bx bx-hide show-hide"></i>
+        </div>
+        <span class="error password-error">
+          <i class="bx bx-error-circle error-icon"></i>
+          <p class="error-text">Password not match.</p>
+        </span>
+      </div>
+
+      <div class="input-field button">
+          <input type="submit" value="Submit Now">
+      </div>
+    </form>
+  </div> 
+
+  <script src="scripts/signUp.js"></script>
+</body>
+</html>

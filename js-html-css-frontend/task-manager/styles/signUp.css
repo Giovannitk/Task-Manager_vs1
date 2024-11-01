@@ -85,10 +85,10 @@ form .input-field {
   font-size: 15px;
 }
 
-.password-field .error {
+.password-field .error .confirm-field{
   align-items:  flex-start;
 }
-.password-field .error-icon {
+.password-field .error-icon .confirm-field{
   margin-top: 4px;
 }
 
@@ -105,9 +105,4 @@ form .input-field {
 }
 .button input:hover {
   background-color: #0e4b00;
-}
-
-.to-signup {
-  font-size: 12px;
-  margin-top: 10px;
 }

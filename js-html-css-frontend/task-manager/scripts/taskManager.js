@@ -3,7 +3,8 @@ document.querySelector("h1").innerText = `Benvenuto ${username}`;
 
 const token = localStorage.getItem('token');
 if (!token) {
-  alert("Token non trovato. Effettua nuovamente il login.");
+  alert("User not found. Try login again.");
+  location.href = 'login.html';
 } else {
   fetchTasks();
 }
