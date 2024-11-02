@@ -6,7 +6,6 @@
     <title>SignUp TaskManager</title>
 
     <link rel="stylesheet" href="styles/signUp.css">
-
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css">
 </head>
 <body>
@@ -23,7 +22,7 @@
         </span>
       </div>
 
-      <div class="field  password-field">
+      <div class="field password-field">
         <div class="input-field">
           <input type="password" placeholder="Enter your password" class="password"/>
           <i class="bx bx-hide show-hide"></i>
@@ -34,7 +33,7 @@
         </span>
       </div>
 
-      <div class="field  confirm-field">
+      <div class="field confirm-field">
         <div class="input-field">
           <input type="password" placeholder="Confirm your password" class="confirm-pass"/>
           <i class="bx bx-hide show-hide"></i>
@@ -45,8 +44,16 @@
         </span>
       </div>
 
+      <!-- Messaggio di avviso se l'admin esiste già -->
+      <div id="admin-info" class="hidden">An admin already exists. You can only register as a USER.</div>
+
+      <div class="text-left checkbox-wrapper checkbox-role js-checkbox-role">
+        <input type="checkbox" id="terms" class="checkbox">
+        <label class="checkbox-label" for="terms">check if you are admin.</label>
+      </div>
+
       <div class="input-field button">
-          <input type="submit" value="Submit Now">
+        <input type="submit" value="Submit Now">
       </div>
     </form>
   </div> 

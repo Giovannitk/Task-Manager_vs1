@@ -1,5 +1,7 @@
 package com.example.taskmanager.task_manager.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,11 +32,11 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody User user) {
+    public Map<String, String> registerUser(@RequestBody User user) {
     	try {
     		return userDetailsService.registerNewUser(user, passwordEncoder);
     	}catch(IllegalArgumentException ex) {
-    		return ex.getMessage();
+    		return null;
     	}
     }
     
@@ -61,5 +64,10 @@ public class UserController {
     	}
     }
 
+    @GetMapping("/userAdmin")
+    public ResponseEntity<Map<String, Boolean>> checkIfExistsAdmin() {
+        boolean adminExists = userDetailsService.checkIfExistsAdmin();
+        return ResponseEntity.ok(Map.of("adminExists", adminExists));
+    }
 }
 

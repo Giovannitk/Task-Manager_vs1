@@ -93,7 +93,7 @@ form .input-field {
 }
 
 .button {
-  margin: 25px 0 6px;
+  margin: 15px 0 6px;
 }
 .button input {
   color: #fff;
@@ -105,4 +105,15 @@ form .input-field {
 }
 .button input:hover {
   background-color: #0e4b00;
+}
+
+.checkbox-role {
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+[type="checkbox"] { vertical-align: middle; word-wrap: break-word;margin-left:1% } 
+
+.hidden {
+  display: none;
 }

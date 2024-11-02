@@ -6,4 +6,5 @@ import com.example.taskmanager.task_manager.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);  // Metodo per trovare un utente in base al nome utente
+    User findByRole(String role); // Metodo per trovare un utente in base al rulo
 }

@@ -46,19 +46,20 @@ public class MyUserDetailsService implements UserDetailsService {
         if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new IllegalArgumentException("Username already exists");
         }
-        
+
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         
-        if (user.getRole() == null || user.getRole().isEmpty()) {
+        Map<String, String> response = new HashMap<>();
+        
+        if ("ADMIN".equals(user.getRole()) && userRepository.findByRole("ADMIN") != null) {
             user.setRole("USER");
+            response.put("message", "Admin already exists, registered as USER instead.");
+        } else {
+            response.put("message", "User registered successfully!");
         }
         
         userRepository.save(user);
-        
-        // Costruisce una risposta JSON
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "User registered successfully!");
         return response;
     }
 
@@ -73,6 +74,13 @@ public class MyUserDetailsService implements UserDetailsService {
 	    
 	    // Cancella tutti i task con una singola chiamata
 	    taskRepository.deleteAll(tasks);
+	}
+	
+	public boolean checkIfExistsAdmin() {
+		if(userRepository.findByRole("ADMIN") != null) {
+			return true;
+		}
+		return false;
 	}
 
 }
