@@ -45,6 +45,8 @@ async function createTask() {
   const newDescription = document.getElementById('description').value;
 
   try {
+    if(newTitle==='' || newDescription==='') return;
+
     const response = await fetch(`http://localhost:8081/tasks`, {
       method: 'POST',
       headers: setAuthHeaders(),
