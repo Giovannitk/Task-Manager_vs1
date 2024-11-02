@@ -9,26 +9,26 @@ const form = document.querySelector("form"),
   passConfInput = passConfField.querySelector(".confirm-pass");
 
 
-  async function hideCheckAdmin() {
-    try {
-      const response = await fetch("http://localhost:8081/userAdmin");
-  
-      if (!response.ok) {  // Controlla se la risposta è 200 OK
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-  
-      if (data.adminExists) {
-        document.querySelector('.js-checkbox-role').classList.add("hidden");
-        document.getElementById("admin-info").classList.remove("hidden");
-      }
-    } catch (error) {
-      console.error("Error checking admin status:", error);
+async function hideCheckAdmin() {
+  try {
+    const response = await fetch("http://localhost:8081/userAdmin");
+
+    if (!response.ok) {  // Controlla se la risposta è 200 OK
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
+    const data = await response.json();
+
+    if (data.adminExists) {
+      document.querySelector('.js-checkbox-role').classList.add("hidden");
+      document.getElementById("admin-info").classList.remove("hidden");
+    }
+  } catch (error) {
+    console.error("Error checking admin status:", error);
   }
-  
-  hideCheckAdmin();  
+}
+
+hideCheckAdmin();  
   
 
 // Username validation

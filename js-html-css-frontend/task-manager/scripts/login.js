@@ -4,6 +4,8 @@ const form = document.querySelector("form"),
   passField = form.querySelector(".password-field"),
   passInput = passField.querySelector(".password");
 
+
+
 // Username validation
 function checkUsername() {
   const usernamePattern = /^[a-zA-Z0-9_-]{8,16}$/;

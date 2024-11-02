@@ -1,5 +1,6 @@
 package com.example.taskmanager.task_manager.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,13 @@ public class UserController {
     public ResponseEntity<Map<String, Boolean>> checkIfExistsAdmin() {
         boolean adminExists = userDetailsService.checkIfExistsAdmin();
         return ResponseEntity.ok(Map.of("adminExists", adminExists));
+    }
+    
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userDetailsService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 }
 

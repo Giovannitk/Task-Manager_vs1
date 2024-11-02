@@ -1,6 +1,7 @@
 package com.example.taskmanager.task_manager.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,4 +84,9 @@ public class MyUserDetailsService implements UserDetailsService {
 		return false;
 	}
 
+	public List<com.example.taskmanager.task_manager.model.User> getAllUsers() {
+		return userRepository.findAll();
+	}
+
+	
 }
