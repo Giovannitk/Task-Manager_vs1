@@ -1,13 +1,74 @@
+/* Stile generale */
 body {
-  background-color: antiquewhite;
-  color: black;
+  background-color: #fdf5e6; /* Colore più morbido per uno sfondo antiquewhite */
+  color: #333;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Intestazione */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  background-color: #333;
+  color: white;
 }
 
 .header {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  font-size: x-large;
+  font-size: 1.5em;
 }
 
+.log-out-button {
+  background-color: #d9534f;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.log-out-button:hover {
+  background-color: #c9302c;
+}
+
+/* Stile del form */
+#taskForm {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.input-task {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 250px;
+}
+
+.add-task {
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.add-task:hover {
+  background-color: #555;
+}
+
+/* Stile della tabella */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -20,27 +81,38 @@ th, td {
   border-bottom: 1px solid #ddd;
 }
 
-.add-task,
-.update-button,
-.delete-button,
-.log-out-button {
-  background-color: black;
+th {
+  background-color: #f4f4f4;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #eaeaea;
+}
+
+/* Stili per i pulsanti della tabella */
+.update-button, .delete-button {
+  background-color: #333;
   color: white;
+  border: none;
   border-radius: 5px;
   cursor: pointer;
-}
-
-.log-out-button {
-  background-color: red;
-  margin-left: 175px;
-  margin-bottom: 10px;
-}
-
-.update-button, .delete-button {
+  padding: 5px 10px;
   margin-right: 5px;
+  font-size: 0.9em;
 }
 
-.input-task {
-  color: black;
-  border-radius: 5px;
+.update-button:hover {
+  background-color: #5bc0de;
+}
+
+.delete-button:hover {
+  background-color: #d9534f;
+}
+
+.complete-checkbox {
+  cursor: pointer;
 }

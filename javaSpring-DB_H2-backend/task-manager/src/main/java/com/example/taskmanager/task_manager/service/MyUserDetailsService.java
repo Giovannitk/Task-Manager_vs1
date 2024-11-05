@@ -3,6 +3,7 @@ package com.example.taskmanager.task_manager.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -78,15 +79,25 @@ public class MyUserDetailsService implements UserDetailsService {
 	}
 	
 	public boolean checkIfExistsAdmin() {
-		if(userRepository.findByRole("ADMIN") != null) {
-			return true;
-		}
-		return false;
+	    List<com.example.taskmanager.task_manager.model.User> admins = userRepository.findAllByRole("ADMIN");
+	    return !admins.isEmpty();
 	}
+
 
 	public List<com.example.taskmanager.task_manager.model.User> getAllUsers() {
 		return userRepository.findAll();
 	}
 
+	public String findRoleByUsername(String username) {
+	    com.example.taskmanager.task_manager.model.User user = userRepository.findByUsername(username);
+	    return user != null ? user.getRole() : null;
+	}
 	
+	public com.example.taskmanager.task_manager.model.User saveUser(com.example.taskmanager.task_manager.model.User updatedUser) {
+        return userRepository.save(updatedUser);
+    }
+
+	public Optional<com.example.taskmanager.task_manager.model.User> findUserById(Long id) {
+        return userRepository.findById(id);
+    }
 }

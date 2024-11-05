@@ -2,6 +2,7 @@ package com.example.taskmanager.task_manager.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,10 +15,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.taskmanager.security.JwtUtil;
-import com.example.taskmanager.task_manager.model.AuthenticationResponse;
+import com.example.taskmanager.task_manager.model.ResponseLogin;
 import com.example.taskmanager.task_manager.model.User;
 
 @RestController
@@ -47,9 +49,27 @@ public class UserController {
 
         if (userDetails != null && passwordEncoder.matches(user.getPassword(), userDetails.getPassword())) {
             String token = jwtUtil.generateToken(userDetails);  // Genera il token JWT
-            return ResponseEntity.ok(new AuthenticationResponse(token));  // Restituisci il token
+            
+            // Estrai il ruolo direttamente dal database
+            String role = userDetailsService.findRoleByUsername(user.getUsername()); // Metodo implementato
+
+            return ResponseEntity.ok(new ResponseLogin(role, token));  // Restituisci il token e il ruolo dell'utente.
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed! Incorrect username or password.");
+        }
+    }
+
+    @PutMapping("/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<User> updateTask(@PathVariable Long id, @RequestBody String role) {
+        Optional<User> user = userDetailsService.findUserById(id);
+        if (user.isPresent()) {
+            User updatedUser = user.get();
+            updatedUser.setRole(role);
+            userDetailsService.saveUser(updatedUser);
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 

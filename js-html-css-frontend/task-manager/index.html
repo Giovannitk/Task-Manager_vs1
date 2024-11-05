@@ -14,24 +14,33 @@
         </p>
     </div>
 
-    <form id="taskForm">
-        <input type="text" id="title" placeholder="Title" required class="input-task">
-        <input type="text" id="description" placeholder="Description" required class="input-task">
-        <button type="submit" id="addTaskButton" class="add-task">Add Task</button>
-    </form>
+    <!-- Sezione per la gestione dei task (solo per utenti normali) -->
+    <div id="task-section" class="content-section">
+        <form id="taskForm">
+            <input type="text" id="title" placeholder="Title" required class="input-task">
+            <input type="text" id="description" placeholder="Description" required class="input-task">
+            <button type="submit" id="addTaskButton" class="add-task">Add Task</button>
+        </form>
 
-    <table id="taskTable">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Completed</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="taskList">
-        </tbody>
-    </table>
+        <table id="taskTable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Completed</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="taskList">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sezione per la gestione utenti (solo per admin) -->
+    <div id="user-management" class="content-section hidden">
+        <h2>User Management</h2>
+        <ul id="userList"></ul> <!-- Aggiungi la lista utenti -->
+    </div>
 
     <script src="scripts/taskManager.js"></script>
 </body>

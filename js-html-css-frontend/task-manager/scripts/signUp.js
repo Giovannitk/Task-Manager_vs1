@@ -90,7 +90,7 @@ form.addEventListener("submit", async function(event) {
     const role = document.querySelector('.js-checkbox-role input[type="checkbox"]').checked ? 'ADMIN' : 'USER';
 
 
-    alert();
+    //alert();
     console.log(`${role}`);
     
     fetch("http://localhost:8081/register", {
