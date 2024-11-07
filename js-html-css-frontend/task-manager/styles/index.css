@@ -1,13 +1,32 @@
 /* Stile generale */
+html { 
+  background: url(../img/img-background.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
 body {
-  background-color: #fdf5e6; /* Colore più morbido per uno sfondo antiquewhite */
+  /* background-color: #fdf5e6; /* Colore più morbido per uno sfondo antiquewhite */
   color: #333;
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
+
+.head-body-sup {
+  margin: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.head-body {
+  background-color: #dbd9d9;
+  border-radius: 10px;
+  opacity: 100%;
 }
 
 /* Intestazione */
@@ -24,6 +43,7 @@ body {
 .header {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: 1.5em;
+  color:#000000;
 }
 
 .log-out-button {
@@ -43,7 +63,7 @@ body {
 /* Stile del form */
 #taskForm {
   margin: 20px 0;
-  display: flex;
+  /* display: flex; */
   gap: 10px;
   align-items: center;
 }
@@ -85,8 +105,8 @@ th {
   background-color: #f4f4f4;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+tbody  {
+  background-color: #b8adad;
 }
 
 tbody tr:hover {
@@ -115,4 +135,23 @@ tbody tr:hover {
 
 .complete-checkbox {
   cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+.content-section-table-users {
+  background-color: #62b4cd;
+  padding: 10px;
+  border-radius: 30px;
+  padding-bottom: 20px;
+  padding-top: 0;
+  margin: 15px;
+  margin-top: 0;
+}
+
+.content-section {
+  margin: 20px;
+  margin-top: 0;
 }

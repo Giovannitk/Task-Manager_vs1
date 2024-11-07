@@ -1,5 +1,6 @@
 package com.example.taskmanager.task_manager.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.taskmanager.security.JwtUtil;
 import com.example.taskmanager.task_manager.model.ResponseLogin;
 import com.example.taskmanager.task_manager.model.User;
+import com.example.taskmanager.task_manager.model.UserWithTaskCountDTO;
 
 @RestController
 public class UserController {
@@ -93,9 +95,16 @@ public class UserController {
     
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserWithTaskCountDTO>> getAllUsersWithTaskCount() {
         List<User> users = userDetailsService.getAllUsers();
-        return ResponseEntity.ok(users);
+        List<UserWithTaskCountDTO> usersWithTaskCounts = new ArrayList<>();
+
+        for (User user : users) {
+            int taskCount = userDetailsService.getCountTasksByUser(user);
+            usersWithTaskCounts.add(new UserWithTaskCountDTO(user, taskCount));
+        }
+
+        return ResponseEntity.ok(usersWithTaskCounts);
     }
 }
 

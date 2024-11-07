@@ -5,10 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager</title>
     <link rel="stylesheet" href="styles/index.css">
+    <style>
+        body, html {
+          height: 100%;
+          margin: 0;
+        }
+        
+        .bg {
+          /* The image used */
+          background-image: url("img_girl.jpg");
+        
+          /* Full height */
+          height: 100%; 
+        
+          /* Center and scale the image nicely */
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <p>
+    <div class="head-body-sup">
+        <p class="head-body">
             <span class="header"></span>
             <button type="submit" class="log-out-button" id="logoutButton">Log-out</button>
         </p>
@@ -36,10 +55,21 @@
         </table>
     </div>
 
-    <!-- Sezione per la gestione utenti (solo per admin) -->
-    <div id="user-management" class="content-section hidden">
+    <!-- Sezione per la gestione degli utenti (solo per gli amministratori) -->
+    <div id="user-management" class="content-section-table-users">
         <h2>User Management</h2>
-        <ul id="userList"></ul> <!-- Aggiungi la lista utenti -->
+        <table id="taskTable">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Tasks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userList">
+            </tbody>
+        </table>
     </div>
 
     <script src="scripts/taskManager.js"></script>

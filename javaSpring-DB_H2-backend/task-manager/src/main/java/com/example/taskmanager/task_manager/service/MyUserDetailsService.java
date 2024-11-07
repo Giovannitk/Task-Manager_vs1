@@ -100,4 +100,8 @@ public class MyUserDetailsService implements UserDetailsService {
 	public Optional<com.example.taskmanager.task_manager.model.User> findUserById(Long id) {
         return userRepository.findById(id);
     }
+	
+	public int getCountTasksByUser(com.example.taskmanager.task_manager.model.User user) {
+		return taskRepository.findByUser(user).size();
+	}
 }

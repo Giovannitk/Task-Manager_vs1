@@ -56,26 +56,30 @@ async function fetchUsers() {
     headers: setAuthHeaders(),
   });
 
-  const users = await response.json();
+  const usersCount = await response.json();
   const userList = document.getElementById('userList');
   userList.innerHTML = ''; // Pulizia della lista prima di aggiornare
 
-  users.forEach(user => {
-    if(user.role !== 'ADMIN'){
-      const listItem = document.createElement('li');
-      listItem.innerHTML = `
-        ${user.username} - ${user.role}
-        <button class="update-button" data-id="${user.id}">Update Role</button>
-        <button class="delete-button" data-id="${user.id}">Delete</button>
+  usersCount.forEach(userCount => {
+    if(userCount.user.role !== 'ADMIN'){
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${userCount.user.username}</td>
+        <td>${userCount.user.role}</td>
+        <td>${userCount.taskCount}</td>
+        <td>
+          <button class="update-button" data-id="${userCount.user.id}">Update Role</button>
+          <button class="delete-button" data-id="${userCount.user.id}">Delete</button>
+        </td>
       `;
-      listItem.querySelector('.update-button').addEventListener('click', () => updateUserRole(user.id));
-      listItem.querySelector('.delete-button').addEventListener('click', () => deleteUser(user.id));
+      
+      row.querySelector('.update-button').addEventListener('click', () => updateUserRole(userCount.user.id));
+      row.querySelector('.delete-button').addEventListener('click', () => deleteUser(userCount.user.id));
 
-      userList.appendChild(listItem);
+      userList.appendChild(row);
     }
   });
 }
-
 
 // Funzione per creare un nuovo task
 async function createTask() {
