@@ -1,9 +1,11 @@
 package com.example.taskmanager.task_manager.service;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +29,9 @@ public class MyUserDetailsService implements UserDetailsService {
     
     @Autowired
     private TaskRepository taskRepository;
+    
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -49,8 +54,8 @@ public class MyUserDetailsService implements UserDetailsService {
             throw new IllegalArgumentException("Username already exists");
         }
 
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        //String encodedPassword = passwordEncoder.encode(user.getPassword());
+        //user.setPassword(encodedPassword);
         
         Map<String, String> response = new HashMap<>();
         
@@ -58,10 +63,23 @@ public class MyUserDetailsService implements UserDetailsService {
             user.setRole("USER");
             response.put("message", "Admin already exists, registered as USER instead.");
         } else {
-            response.put("message", "User registered successfully!");
+        	user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setEnabled(false); // Disabilitato finché non conferma
+
+            // Genera il token di conferma e scadenza
+            String confirmationToken = UUID.randomUUID().toString();
+            user.setConfirmationToken(confirmationToken);
+            user.setConfirmationExpiryDate(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)); // 24 ore
+
+            userRepository.save(user);
+
+			// Invia il token via email
+            emailService.sendConfirmationEmail(user.getEmail(), confirmationToken);
+
+            response.put("message", "User registered successfully! Check your email to confirm account.");
         }
         
-        userRepository.save(user);
+        //userRepository.save(user);
         return response;
     }
 
@@ -103,5 +121,14 @@ public class MyUserDetailsService implements UserDetailsService {
 	
 	public int getCountTasksByUser(com.example.taskmanager.task_manager.model.User user) {
 		return taskRepository.findByUser(user).size();
+	}
+
+	public Optional<com.example.taskmanager.task_manager.model.User> findByConfirmationToken(String token) {
+	    return userRepository.findByConfirmationToken(token);
+	}
+
+	public boolean isUserEnabled(String username) {
+	    com.example.taskmanager.task_manager.model.User user = userRepository.findByUsername(username);
+	    return user != null && user.isEnabled();
 	}
 }

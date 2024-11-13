@@ -1,6 +1,7 @@
 package com.example.taskmanager.task_manager.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.taskmanager.security.JwtUtil;
 import com.example.taskmanager.task_manager.model.ResponseLogin;
@@ -37,27 +39,46 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public Map<String, String> registerUser(@RequestBody User user) {
-    	try {
-    		return userDetailsService.registerNewUser(user, passwordEncoder);
-    	}catch(IllegalArgumentException ex) {
-    		return null;
-    	}
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+        try {
+            Map<String, String> response = userDetailsService.registerNewUser(user, passwordEncoder);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Errore durante la registrazione: " + ex.getMessage()));
+        }
     }
     
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-
         if (userDetails != null && passwordEncoder.matches(user.getPassword(), userDetails.getPassword())) {
-            String token = jwtUtil.generateToken(userDetails);  // Genera il token JWT
-            
-            // Estrai il ruolo direttamente dal database
-            String role = userDetailsService.findRoleByUsername(user.getUsername()); // Metodo implementato
-
-            return ResponseEntity.ok(new ResponseLogin(role, token));  // Restituisci il token e il ruolo dell'utente.
+            if (!userDetailsService.isUserEnabled(user.getUsername())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Account non confermato. Controlla la tua email.");
+            }
+            String token = jwtUtil.generateToken(userDetails);
+            String role = userDetailsService.findRoleByUsername(user.getUsername());
+            return ResponseEntity.ok(new ResponseLogin(role, token));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed! Incorrect username or password.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenziali non valide.");
+        }
+    }
+    
+    @GetMapping("/confirm")
+    public ResponseEntity<String> confirmAccount(@RequestParam("token") String token) {
+        Optional<User> userOptional = userDetailsService.findByConfirmationToken(token);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (user.getConfirmationExpiryDate().after(new Date())) {
+                user.setEnabled(true); // Attiva l'account
+                user.setConfirmationToken(null); // Rimuove il token
+                user.setConfirmationExpiryDate(null);
+                userDetailsService.saveUser(user);
+                return ResponseEntity.ok("Account confermato con successo!");
+            } else {
+                return ResponseEntity.status(HttpStatus.GONE).body("Il token di conferma è scaduto.");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token non valido.");
         }
     }
 
