@@ -12,7 +12,7 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     public void sendConfirmationEmail(String to, String token) {
-        String link = "http://localhost:8081/confirm?token= " + token;
+        String link = "http://localhost:8081/confirm?token=" + token;
         String subject = "Conferma la tua registrazione";
         String body = "Clicca sul link per confermare la registrazione: " + link + "\nAttenzione: il link scade in 24 ore.";
 

@@ -49,7 +49,7 @@ form.addEventListener("submit", async function(event) {
   usernameInput.addEventListener("keyup", checkUsername);
   passInput.addEventListener("keyup", createPass);
 
-  if(!usernameField.classList.contains("invalid") && !passField.classList.contains("invalid")){
+  if (![usernameField, passField].some(field => field.classList.contains("invalid"))) {
 
     const username = usernameInput.value;
     const password = passInput.value;

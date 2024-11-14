@@ -2,6 +2,9 @@ const form = document.querySelector("form"),
   usernameField = form.querySelector(".username-field"),
   usernameInput = usernameField.querySelector(".username"),
 
+  emailField = form.querySelector(".email-field"),
+  emailInput = emailField.querySelector(".email"),
+
   passField = form.querySelector(".password-field"),
   passInput = passField.querySelector(".password"),
 
@@ -30,6 +33,14 @@ async function hideCheckAdmin() {
 
 hideCheckAdmin();  
   
+// Email validation
+function checkEmail() {
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailInput.value.match(emailPattern)) {
+    return emailField.classList.add("invalid");
+  }
+  emailField.classList.remove("invalid");
+}
 
 // Username validation
 function checkUsername() {
@@ -72,55 +83,88 @@ function confirmPass(){
   passConfField.classList.remove("invalid");
 }
 
-// Calling Function on form Submit
+// // Calling Function on form Submit
+// form.addEventListener("submit", async function(event) {
+//   event.preventDefault(); //preventing form submitting
+//   checkUsername();
+//   checkEmail();
+//   createPass();
+//   confirmPass();
+
+//   //Calling function on key up
+//   usernameInput.addEventListener("keyup", checkUsername);
+//   passInput.addEventListener("keyup", createPass);
+
+//   if(!usernameField.classList.contains("invalid") && !passField.classList.contains("invalid")){
+
+//     const username = usernameInput.value;
+//     const password = passInput.value;
+//     const role = document.querySelector('.js-checkbox-role input[type="checkbox"]').checked ? 'ADMIN' : 'USER';
+
+
+//     //alert();
+//     console.log(`${role}`);
+    
+//     fetch("http://localhost:8081/register", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify({ username, password, role})
+//     })
+//     .then(response => {
+//       if (!response.ok) {
+//         throw new Error("Signup failed!");
+//       }
+//       // Controlla il tipo di contenuto della risposta
+//       const contentType = response.headers.get("content-type");
+//       if (contentType && contentType.includes("application/json")) {
+//         return response.json();
+//       } else {
+//         return response.text(); // gestisce risposte non JSON
+//       }
+//     })
+//     .then(data => {
+//       // Controlla se il messaggio indica che il ruolo è stato cambiato a USER
+//       if (data.message.includes("Admin already exists")) {
+//           alert(data.message); // Notifica che è stato registrato come USER
+//       } else {
+//           alert(data.message); // Notifica di successo
+//       }
+//       location.href = form.getAttribute("action");
+//     })  
+//     .catch(error => console.error("Error:", error));
+//   }
+// });
+// Form submission
 form.addEventListener("submit", async function(event) {
-  event.preventDefault(); //preventing form submitting
+  event.preventDefault();
   checkUsername();
+  checkEmail();
   createPass();
   confirmPass();
 
-  //Calling function on key up
-  usernameInput.addEventListener("keyup", checkUsername);
-  passInput.addEventListener("keyup", createPass);
-
-  if(!usernameField.classList.contains("invalid") && !passField.classList.contains("invalid")){
-
+  if (![usernameField, emailField, passField, passConfField].some(field => field.classList.contains("invalid"))) {
     const username = usernameInput.value;
+    const email = emailInput.value;
     const password = passInput.value;
     const role = document.querySelector('.js-checkbox-role input[type="checkbox"]').checked ? 'ADMIN' : 'USER';
 
-
-    //alert();
-    console.log(`${role}`);
-    
     fetch("http://localhost:8081/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ username, password, role})
+      body: JSON.stringify({ username, email, password, role })
     })
     .then(response => {
-      if (!response.ok) {
-        throw new Error("Signup failed!");
-      }
-      // Controlla il tipo di contenuto della risposta
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        return response.json();
-      } else {
-        return response.text(); // gestisce risposte non JSON
-      }
+      if (!response.ok) throw new Error("Signup failed!");
+      return response.json();
     })
     .then(data => {
-      // Controlla se il messaggio indica che il ruolo è stato cambiato a USER
-      if (data.message.includes("Admin already exists")) {
-          alert(data.message); // Notifica che è stato registrato come USER
-      } else {
-          alert(data.message); // Notifica di successo
-      }
+      alert(data.message.includes("Admin already exists") ? data.message : "Registration successful!");
       location.href = form.getAttribute("action");
-    })  
+    })
     .catch(error => console.error("Error:", error));
   }
 });

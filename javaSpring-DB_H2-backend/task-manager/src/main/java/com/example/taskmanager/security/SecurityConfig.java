@@ -33,7 +33,7 @@ public class SecurityConfig {
             .cors() // Abilita CORS
             .and()
             .authorizeRequests()
-            .antMatchers("/userAdmin", "/login", "/register", "/h2-console/**").permitAll()  // Consenti l'accesso senza autenticazione a queste rotte
+            .antMatchers("/userAdmin", "/login", "/register", "/h2-console/**","/confirm").permitAll()  // Consenti l'accesso senza autenticazione a queste rotte
             .anyRequest().authenticated()  // Richiedi autenticazione per tutte le altre richieste
             .and()
             .headers().frameOptions().sameOrigin()  // Permetti i frame per /h2-console
