@@ -1,7 +1,8 @@
 package com.example.taskmanager.task_manager.model;
 
-import java.sql.Date;
-
+import java.sql.Date; // java.sql.Date is deprecated.
+						// It’s better to use LocalDate or LocalDateTime (from Java.time)
+// Import annotations to work with JPA(Java Persistence API), like @Entity, @Id, ...
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,11 +10,13 @@ import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
-@Entity
-@Table(name = "users")
+@Entity //Indicates that the class corresponds to a database table.
+@Table(name = "users") //Table named users.
 public class User {
 
-    @Id
+    @Id //the id field is the primary key.
+    //the id is generated automatically, 
+    //with the IDENTITY strategy, typical for relational databases.
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -34,16 +37,17 @@ public class User {
 
 	private String role;
     
-    @Column(nullable = true)
+    @Column(nullable = true) //Specifies that the field can be null.
     private String confirmationToken;
 
     @Column(nullable = true)
     private Date confirmationExpiryDate;
 
     @Column(nullable = false)
-    private boolean enabled = false; // L'utente non è attivo finché non conferma
+    private boolean enabled = false; // The user is not active until confirmed.
 
-    public User() {}
+    // Empty constructor required by JPA.
+    public User() {} 
 
     public User(String username, String password, String role, String email) {
         this.username = username;

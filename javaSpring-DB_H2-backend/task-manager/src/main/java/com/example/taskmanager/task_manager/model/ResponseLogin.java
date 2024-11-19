@@ -2,7 +2,7 @@ package com.example.taskmanager.task_manager.model;
 
 public class ResponseLogin {
 
-    private String jwt; // Modifica: utilizza direttamente una stringa per il JWT
+    private String jwt; // Use a string directly for JWT.
     private String role;
 
     public ResponseLogin(String role, String jwt) {

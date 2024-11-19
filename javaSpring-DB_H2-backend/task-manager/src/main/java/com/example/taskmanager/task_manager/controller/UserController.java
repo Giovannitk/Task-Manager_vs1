@@ -41,9 +41,11 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
+        	//Validates the user’s data and uses userDetailsService to save it.
             Map<String, String> response = userDetailsService.registerNewUser(user, passwordEncoder);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException ex) {
+        	//Handles exceptions like duplicate usernames and returns an error message.
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Errore durante la registrazione: " + ex.getMessage()));
         }
     }
@@ -52,25 +54,31 @@ public class UserController {
     public ResponseEntity<?> loginUser(@RequestBody User user) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         if (userDetails != null && passwordEncoder.matches(user.getPassword(), userDetails.getPassword())) {
+        	//Check if the password is valid.
             if (!userDetailsService.isUserEnabled(user.getUsername())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Account non confermato. Controlla la tua email.");
             }
             String token = jwtUtil.generateToken(userDetails);
             String role = userDetailsService.findRoleByUsername(user.getUsername());
+            //Returns a JWT token if login was successful.
             return ResponseEntity.ok(new ResponseLogin(role, token));
         } else {
+        	//Returns errors in case of invalid credentials or unconfirmed account.
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenziali non valide.");
         }
     }
     
     @GetMapping("/confirm")
     public ResponseEntity<String> confirmAccount(@RequestParam("token") String token) {
+
+        //Confirm a user’s account using the token sent via email.
         Optional<User> userOptional = userDetailsService.findByConfirmationToken(token);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
+            //Check the validity of the token and update the user status.
             if (user.getConfirmationExpiryDate().after(new Date())) {
-                user.setEnabled(true); // Attiva l'account
-                user.setConfirmationToken(null); // Rimuove il token
+                user.setEnabled(true); // Enable account
+                user.setConfirmationToken(null); // Removes the token
                 user.setConfirmationExpiryDate(null);
                 userDetailsService.saveUser(user);
                 return ResponseEntity.ok("Account confermato con successo!");
@@ -82,6 +90,9 @@ public class UserController {
         }
     }
 
+    /*
+     * Update a user’s role. Only accessible to users with ADMIN role 
+     * thanks to @PreAuthorize("hasRole('ADMIN')").*/
     @PutMapping("/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateTask(@PathVariable Long id, @RequestBody String role) {
@@ -96,6 +107,9 @@ public class UserController {
         }
     }
 
+    /*
+     * Delete a user and all of its tasks. Returns an 
+     * error if the ID does not exist.*/
     @DeleteMapping("/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
@@ -108,12 +122,17 @@ public class UserController {
     	}
     }
 
+    //Check if there is at least one user with ADMIN role.
     @GetMapping("/userAdmin")
     public ResponseEntity<Map<String, Boolean>> checkIfExistsAdmin() {
         boolean adminExists = userDetailsService.checkIfExistsAdmin();
         return ResponseEntity.ok(Map.of("adminExists", adminExists));
     }
     
+    /*
+     * Returns a list of users with their tasks. Requires administrator 
+     * permissions.
+     */
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserWithTaskCountDTO>> getAllUsersWithTaskCount() {

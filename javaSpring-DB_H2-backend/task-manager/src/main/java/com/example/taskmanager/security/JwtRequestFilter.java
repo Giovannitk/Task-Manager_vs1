@@ -16,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.taskmanager.task_manager.service.MyUserDetailsService;
 
+// Filter that intercepts every HTTP request to extract and validate the JWT token.
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
@@ -29,22 +30,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        // Estrarre l'header Authorization
+        // Extract Authorization header.
         String authorizationHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
 
-        // Controlla se l'header inizia con "Bearer "
+        // Check the header: Search for a JWT token in the authorization 
+        // header and whether the header starts with "Bearer".
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);  // Estrai il token senza "Bearer "
             username = jwtUtil.extractUsername(token);  // Estrai l'username dal token JWT
         }
 
         // Se il contesto di sicurezza non ha già un utente autenticato
+        // If the security context doesn't already have an authenticated user.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             
-            // Verifica se il token è valido
+            // Validates the token: If the token is valid, authenticates the user by setting the security context.
             if (jwtUtil.validateToken(token, userDetails)) {
                 // Crea il token di autenticazione con i ruoli (authorities)
                 UsernamePasswordAuthenticationToken authenticationToken = 
@@ -57,7 +60,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
-        // Passa la richiesta alla catena di filtri successivi
+        // Passes the request to the next filter chain.
+        // Go to next filter: Processing of the request continues.
         chain.doFilter(request, response);
     }
 }

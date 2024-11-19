@@ -1,3 +1,4 @@
+//The class is a REST controller that handles HTTP requests related to tasks.
 package com.example.taskmanager.task_manager.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +17,21 @@ import javax.persistence.EntityNotFoundException;
 import com.example.taskmanager.task_manager.model.Task;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/tasks")  //All end-points defined in the class start with /tasks.
 public class TaskController {
 
     @Autowired
     private com.example.taskmanager.task_manager.service.TaskService taskService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping //Associate the HTTP GET endpoint.
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')") //Requires the user to have the USER or ADMIN role.
+    // Retrieves the authenticated user from the security context and 
+    // returns the tasks filtered through the service,
     public List<Task> getTasks() {
-        // Ottieni l'utente autenticato
+        // Get the authenticated user.
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        // Passa l'utente al servizio per filtrare i task
+        // Pass the user to the service to filter tasks
         return taskService.getTasksForUser(userDetails);
     }
 
@@ -44,15 +47,17 @@ public class TaskController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public Task createTask(@RequestBody Task task) {
-        // Ottieni l'utente autenticato
+    //@RequestBody: Maps the JSON request body to a Task object.
+    public Task createTask(@RequestBody Task task) { //Retrieve the authenticated user and use the service to create a task.
+        // Get the authenticated user.
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        // Passa l'utente autenticato al servizio
+        // Pass authenticated user to the service.
         return taskService.createTask(task, userDetails);
     }
 
     @PutMapping("/{id}")
+    // Search for the task to update and modify its fields if found.
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
         Optional<Task> task = taskService.findTaskById(id);
         if (task.isPresent()) {

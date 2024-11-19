@@ -1,3 +1,6 @@
+/*
+ * This class handles the business logic related to tasks.
+ * It is annotated with @Service, making it a component managed by Spring.*/
 package com.example.taskmanager.task_manager.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,7 @@ import com.example.taskmanager.task_manager.model.Task;
 import com.example.taskmanager.task_manager.model.User;
 import com.example.taskmanager.task_manager.repository.UserRepository;
 
-@Service
+@Service //Indicates that this class is a service component managed by Spring.
 public class TaskService {
 
     @Autowired
@@ -22,11 +25,11 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
+    //Takes a UserDetails object (representing the authenticated user).
     public List<Task> getTasksForUser(UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername());
         return taskRepository.findByUser(user);
     }
-
 
     public Optional<Task> findTaskById(Long id) {
         return taskRepository.findById(id);
@@ -45,13 +48,13 @@ public class TaskService {
     }
     
     public Task createTask(Task task, UserDetails userDetails) {
-        // Ottieni l'utente dal contesto di sicurezza
+        // Obtains the user in the security context
         User user = userRepository.findByUsername(userDetails.getUsername());
         
-        // Associa l'utente al task
+        // Associate the user with the task.
         task.setUser(user);
         
-        // Salva il task
+        // Save task.
         return taskRepository.save(task);
     }
 

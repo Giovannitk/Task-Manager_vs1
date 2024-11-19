@@ -21,6 +21,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+//"implements UserDetailsService": Implements the Spring Security interface 
+//for managing user details.
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
@@ -41,7 +43,7 @@ public class MyUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User '" + username + "' not found");
         }
 
-        // Converti l'oggetto User in un UserDetails di Spring Security
+        // Converts the user into a UserDetails object used by Spring Security.
         UserBuilder builder = User.withUsername(user.getUsername());
         builder.password(user.getPassword());
         builder.roles(user.getRole());
@@ -50,7 +52,8 @@ public class MyUserDetailsService implements UserDetailsService {
     }
     
     public Map<String, String> registerNewUser(com.example.taskmanager.task_manager.model.User user, PasswordEncoder passwordEncoder) {
-        if (userRepository.findByUsername(user.getUsername()) != null) {
+    	//Check for duplicates.
+    	if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new IllegalArgumentException("Username already exists");
         }
 
@@ -64,16 +67,16 @@ public class MyUserDetailsService implements UserDetailsService {
             response.put("message", "Admin already exists, registered as USER instead.");
         } else {
         	user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setEnabled(false); // Disabilitato finché non conferma
+            user.setEnabled(false); // User disabled until confirmed.
 
-            // Genera il token di conferma e scadenza
+            // Generation of a confirmation token and its expiration.
             String confirmationToken = UUID.randomUUID().toString();
             user.setConfirmationToken(confirmationToken);
             user.setConfirmationExpiryDate(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)); // 24 ore
 
             userRepository.save(user);
 
-			// Invia il token via email
+			// Sending a confirmation email with token.
             emailService.sendConfirmationEmail(user.getEmail(), confirmationToken);
 
             response.put("message", "User registered successfully! Check your email to confirm account.");
@@ -123,10 +126,12 @@ public class MyUserDetailsService implements UserDetailsService {
 		return taskRepository.findByUser(user).size();
 	}
 
+	//Find a user via the confirmation token.
 	public Optional<com.example.taskmanager.task_manager.model.User> findByConfirmationToken(String token) {
 	    return userRepository.findByConfirmationToken(token);
 	}
 
+	//Check if a user is enabled.
 	public boolean isUserEnabled(String username) {
 	    com.example.taskmanager.task_manager.model.User user = userRepository.findByUsername(username);
 	    return user != null && user.isEnabled();

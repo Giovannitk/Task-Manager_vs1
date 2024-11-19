@@ -11,6 +11,7 @@
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
   
+  <!-- Provides default configurations for Spring Boot projects -->
   <parent>
        <groupId>org.springframework.boot</groupId>
        <artifactId>spring-boot-starter-parent</artifactId>
@@ -20,9 +21,14 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.release>11</maven.compiler.release> <!-- Java version 11 used -->
   </properties>
 
+  <!-- 
+   This section is a way to centrally manage JUnit
+   dependency versions using a BOM (Bill of Materials). 
+   Useful if you use multiple JUnit dependencies. 
+   -->
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -36,52 +42,74 @@
   </dependencyManagement>
 
   <dependencies>
+  	<!-- Used to write unit tests in your Java code. -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- Optionally: parameterized tests support -->
+    <!-- Optionally: parameterized tests support 
+    	Enable parametrized tests in JUnit 5, 
+    	that is tests that accept different inputs 
+    	and generate different combinations of test cases.
+    -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- 
+    	Both dependencies above junit-jupiter-api 
+    	and junit-jupiter-params are already included 
+    	in spring-boot-starter-test, so they might be omitted. 
+    -->
     
+    <!-- Provides tools for creating web applications, including an integrated server (Tomcat). -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
    	</dependency>
    	
+   	<!-- Allows you to work with relational databases using JPA and Hibernate. -->
    	<dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
     
+    <!-- Use of H2 in-memory database for development and testing. -->
     <dependency>
 	  <groupId>com.h2database</groupId>
 	  <artifactId>h2</artifactId>
 	  <scope>runtime</scope>
     </dependency>
 
+	<!-- 
+		Contains all the libraries needed to test Spring Boot applications, including:
+		JUnit 5 (default).
+		Mockito (for mocking).
+		AssertJ (for fluid assertions).
+		Spring Test (for testing of Spring components such as controllers or repositories).
+	-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
     
+    <!-- Enable sending of emails. -->
     <dependency>
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-mail</artifactId>
 	</dependency>
     
-    
+    <!-- Used for authentication via token. -->
     <dependency>
         <groupId>io.jsonwebtoken</groupId>
         <artifactId>jjwt</artifactId>
         <version>0.9.1</version> 
     </dependency>
     
+    <!-- Manages application security. -->
     <dependency>
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-security</artifactId>
@@ -97,8 +125,10 @@
   
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+    	<!-- Plugins in Maven are tools that extend the project’s build functionality. -->
       <plugins>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+        <!-- Delete files generated in previous builds (e.g. target folder) to ensure a clean build during the clean phase. -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.4.0</version>
@@ -108,10 +138,18 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.3.1</version>
         </plugin>
+        <!-- 
+        	Compile the source code during the compile phase.
+			Required to specify the Java version if you don’t 
+			define it in project properties  -->
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.13.0</version>
         </plugin>
+        <!-- 
+         	Performs tests during the test phase.
+			Supports running written tests with JUnit or TestNG.
+         -->
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.3.0</version>
@@ -138,11 +176,25 @@
           <version>3.6.1</version>
         </plugin>
         
+        <!-- Integrate Maven with Spring Boot. 
+        	Allows you to run the mvn spring-boot:run command to start 
+        	the application without having to create an executable jar. -->
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
         </plugin>
       </plugins>
+      <!-- 
+      	Not all the plugins above are required. Here’s a summary:
+		Mandatory:
+		spring-boot-maven-plugin: Fundamental for Spring Boot projects.
+		maven-compiler-plugin: If you need to check the version of Java used during compilation.
+		Optional:
+		maven-clean-plugin: Useful for cleaning the build.
+		maven-surefire-plugin: Only needed if you have tests in the project.
+		The other plugins (e.g. maven-site-plugin, maven-project-info-reports-plugin) are for 
+		more complex projects and are not essential for a simple application like a Task Manager. 
+		-->
     </pluginManagement>
   </build>
 </project>

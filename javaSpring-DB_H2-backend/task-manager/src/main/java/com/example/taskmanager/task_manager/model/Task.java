@@ -17,8 +17,8 @@ public class Task {
     private String description;
     private boolean completed;
     
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne //Many-to-one relationship between task and user.
+    @JoinColumn(name = "user_id") //Specifies that the external key in the database is called user_id.
     private User user;
     
     public Task() {}
