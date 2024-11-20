@@ -84,58 +84,7 @@ function confirmPass(){
 }
 
 // // Calling Function on form Submit
-// form.addEventListener("submit", async function(event) {
-//   event.preventDefault(); //preventing form submitting
-//   checkUsername();
-//   checkEmail();
-//   createPass();
-//   confirmPass();
 
-//   //Calling function on key up
-//   usernameInput.addEventListener("keyup", checkUsername);
-//   passInput.addEventListener("keyup", createPass);
-
-//   if(!usernameField.classList.contains("invalid") && !passField.classList.contains("invalid")){
-
-//     const username = usernameInput.value;
-//     const password = passInput.value;
-//     const role = document.querySelector('.js-checkbox-role input[type="checkbox"]').checked ? 'ADMIN' : 'USER';
-
-
-//     //alert();
-//     console.log(`${role}`);
-    
-//     fetch("http://localhost:8081/register", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json"
-//       },
-//       body: JSON.stringify({ username, password, role})
-//     })
-//     .then(response => {
-//       if (!response.ok) {
-//         throw new Error("Signup failed!");
-//       }
-//       // Controlla il tipo di contenuto della risposta
-//       const contentType = response.headers.get("content-type");
-//       if (contentType && contentType.includes("application/json")) {
-//         return response.json();
-//       } else {
-//         return response.text(); // gestisce risposte non JSON
-//       }
-//     })
-//     .then(data => {
-//       // Controlla se il messaggio indica che il ruolo è stato cambiato a USER
-//       if (data.message.includes("Admin already exists")) {
-//           alert(data.message); // Notifica che è stato registrato come USER
-//       } else {
-//           alert(data.message); // Notifica di successo
-//       }
-//       location.href = form.getAttribute("action");
-//     })  
-//     .catch(error => console.error("Error:", error));
-//   }
-// });
 // Form submission
 form.addEventListener("submit", async function(event) {
   event.preventDefault();
