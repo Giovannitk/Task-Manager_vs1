@@ -1,99 +1,64 @@
+//This is Controller
+
+import { validateUsername, validatePassword, loginUser, passVisibility } from './services/userService.js';
+import { saveAuthData } from './services/authService.js';
+
 const form = document.querySelector("form"),
   usernameField = form.querySelector(".username-field"),
   usernameInput = usernameField.querySelector(".username"),
   passField = form.querySelector(".password-field"),
   passInput = passField.querySelector(".password");
 
-
-
 // Username validation
 function checkUsername() {
-  const usernamePattern = /^[a-zA-Z0-9_-]{8,16}$/;
-  if(!usernameInput.value.match(usernamePattern)){
-    return usernameField.classList.add("invalid");
+  if (!validateUsername(usernameInput.value)) {
+    usernameField.classList.add("invalid");
+    return false;
   }
   usernameField.classList.remove("invalid");
+  return true;
 }
 
-// Hide and show password
-const eyeIcons = document.querySelectorAll(".show-hide");
-eyeIcons.forEach(eyeIcon => {
-  eyeIcon.addEventListener("click", () => {
-    const pInput = eyeIcon.parentElement.querySelector("input");
-    if(pInput.type === "password"){
-      eyeIcon.classList.replace("bx-hide", "bx-show");
-      return (pInput.type = "text");
-    }
-    eyeIcon.classList.replace("bx-show", "bx-hide");
-    pInput.type = "password";
-  });
-});
-
-//Password Validation
-function createPass(){
-  const passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$!%*?&])[A-Za-z\d$!%*?&]{8,}$/;
-
-  if(!passInput.value.match(passPattern)){
-    return passField.classList.add("invalid");
+// Password validation
+function checkPassword() {
+  if (!validatePassword(passInput.value)) {
+    passField.classList.add("invalid");
+    return false;
   }
   passField.classList.remove("invalid");
+  return true;
 }
 
-// Calling Function on form Submit
-form.addEventListener("submit", async function(event) {
-  event.preventDefault(); //preventing form submitting
-  checkUsername();
-  createPass();
+// Handle form submission
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-  //Calling function on key up
-  usernameInput.addEventListener("keyup", checkUsername);
-  passInput.addEventListener("keyup", createPass);
+  const isUsernameValid = checkUsername();
+  const isPasswordValid = checkPassword();
 
-  if (![usernameField, passField].some(field => field.classList.contains("invalid"))) {
+  if (!isUsernameValid || !isPasswordValid) {
+    alert("Please fix the validation errors.");
+    return;
+  }
 
+  try {
     const username = usernameInput.value;
     const password = passInput.value;
-    
-    fetch("http://localhost:8081/login", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username, password })
-    })
-    .then(response => {
-      if (!response.ok) { 
-        if (response.status === 401) {
-          alert("Incorrect password.");
-          throw new Error("Login failed! Incorrect password.");
-        } else if (response.status === 403) {
-          alert("Incorrect username or password.");
-          throw new Error("Login failed! Access forbidden.");
-        } else if (response.status === 500) {
-          alert("Server error. Try later.");
-          throw new Error("Server error.");
-        } else {
-          alert("Errore sconosciuto. Riprova.");
-          throw new Error("Unknown error. Try again.");
-        }
-      }
-      return response.json(); // Converte la risposta in JSON se tutto va bene
-    })
-    .then(data => {
-      const token = data.jwt; // Accede al token
-      console.log("Token:", token);
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('username', username);
+    const data = await loginUser(username, password);
 
-      localStorage.setItem("role", data.role);
+    const token = data.jwt;
+    const role = data.role;
 
-      location.href = form.getAttribute("action");  // Login effettuato con successo.
-    })
-    .catch(error => {
-      console.error("Error:", error);
-      alert("Login failed");
-      return;  // Interrompe il flusso in caso di errore
-    });
+    saveAuthData(token, username, role);
+
+    console.log("Login successful, redirecting...");
+    location.href = form.getAttribute("action");
+  } catch (error) {
+    console.error("Error:", error.message);
+    alert(error.message);
   }
 });
+
+// Hide and show password
+passVisibility();

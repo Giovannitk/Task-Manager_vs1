@@ -1,3 +1,7 @@
+//This is Controller
+
+import { signUpUser, validateEmail, hCheckAdmin, passVisibility, validateUsername, validatePassword } from "./services/userService.js";
+
 const form = document.querySelector("form"),
   usernameField = form.querySelector(".username-field"),
   usernameInput = usernameField.querySelector(".username"),
@@ -11,16 +15,9 @@ const form = document.querySelector("form"),
   passConfField = form.querySelector(".confirm-field"),
   passConfInput = passConfField.querySelector(".confirm-pass");
 
-
 async function hideCheckAdmin() {
   try {
-    const response = await fetch("http://localhost:8081/userAdmin");
-
-    if (!response.ok) {  // Controlla se la risposta è 200 OK
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
+    const data = await hCheckAdmin();
 
     if (data.adminExists) {
       document.querySelector('.js-checkbox-role').classList.add("hidden");
@@ -28,6 +25,7 @@ async function hideCheckAdmin() {
     }
   } catch (error) {
     console.error("Error checking admin status:", error);
+    alert(error.message);
   }
 }
 
@@ -35,85 +33,85 @@ hideCheckAdmin();
   
 // Email validation
 function checkEmail() {
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailInput.value.match(emailPattern)) {
-    return emailField.classList.add("invalid");
+  if (!validateEmail(emailInput.value)) {
+    emailField.classList.add("invalid");
+    return false;
   }
   emailField.classList.remove("invalid");
+  return true;
 }
 
 // Username validation
 function checkUsername() {
-  const usernamePattern = /^[a-zA-Z0-9_-]{8,16}$/;
-  if(!usernameInput.value.match(usernamePattern)){
-    return usernameField.classList.add("invalid");
+  if (!validateUsername(usernameInput.value)) {
+    usernameField.classList.add("invalid");
+    return false;
   }
   usernameField.classList.remove("invalid");
+  return true;
 }
 
 // Hide and show password
-const eyeIcons = document.querySelectorAll(".show-hide");
-eyeIcons.forEach(eyeIcon => {
-  eyeIcon.addEventListener("click", () => {
-    const pInput = eyeIcon.parentElement.querySelector("input");
-    if(pInput.type === "password"){
-      eyeIcon.classList.replace("bx-hide", "bx-show");
-      return (pInput.type = "text");
-    }
-    eyeIcon.classList.replace("bx-show", "bx-hide");
-    pInput.type = "password";
-  });
-});
+passVisibility();
 
-//Password Validation
-function createPass(){
-  const passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$!%*?&])[A-Za-z\d$!%*?&]{8,}$/;
-
-  if(!passInput.value.match(passPattern)){
-    return passField.classList.add("invalid");
+// Password validation
+function checkPassword() {
+  if (!validatePassword(passInput.value)) {
+    passField.classList.add("invalid");
+    return false;
   }
   passField.classList.remove("invalid");
+  return true;
 }
 
 //Confirm Password
 function confirmPass(){
   if(passConfInput.value !== passInput.value){
-    return passConfField.classList.add("invalid");
+    passConfField.classList.add("invalid");
+    return false;
   }
   passConfField.classList.remove("invalid");
+  return true;
 }
 
-// // Calling Function on form Submit
+function getSelectedRole() {
+  return document.querySelector('.js-checkbox-role input[type="checkbox"]').checked ? 'ADMIN' : 'USER';
+}
 
+// Calling Function on form Submit
 // Form submission
 form.addEventListener("submit", async function(event) {
   event.preventDefault();
-  checkUsername();
-  checkEmail();
-  createPass();
-  confirmPass();
 
-  if (![usernameField, emailField, passField, passConfField].some(field => field.classList.contains("invalid"))) {
+  const isEmailValid = checkEmail();
+  const isUsernameValid = checkUsername();
+  const isPasswordValid = checkPassword();
+  const isConfirmPassValid = confirmPass();
+
+  if (!isUsernameValid || !isPasswordValid || !isEmailValid || !isConfirmPassValid) {
+    alert("Please fix the validation errors.");
+    return;
+  }
+
+  try{
+    // if (![usernameField, emailField, passField, passConfField].some(field => field.classList.contains("invalid"))) {
     const username = usernameInput.value;
     const email = emailInput.value;
     const password = passInput.value;
-    const role = document.querySelector('.js-checkbox-role input[type="checkbox"]').checked ? 'ADMIN' : 'USER';
+    const role = getSelectedRole();
 
-    fetch("http://localhost:8081/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username, email, password, role })
-    })
-    .then(response => {
-      if (!response.ok) throw new Error("Signup failed!");
-      return response.json();
-    })
-    .then(data => {
-      alert(data.message.includes("Admin already exists") ? data.message : "Registration successful!");
-      location.href = form.getAttribute("action");
-    })
-    .catch(error => console.error("Error:", error));
+    const data = await signUpUser(username, email, password, role);
+
+    alert(data.message.includes("Admin already exists") ? data.message : "Registration successful!");
+    location.href = form.getAttribute("action");
+    //}
+    form.reset();
+  } catch (error) {
+    if (error.message.includes("Admin already exists")) {
+      alert("An admin user already exists. Cannot create another admin.");
+    } else {
+      alert(`Registration failed: ${error.message}`);
+    }
+    console.error("Error:", error.message);
   }
 });
